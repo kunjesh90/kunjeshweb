@@ -2,9 +2,13 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "serve -s ."
+    "start": "serve -s .",
+    "build": "npm install"
   },
   "dependencies": {
-    "serve": "^13.0.0"
+    "serve": "^14.0.1"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
