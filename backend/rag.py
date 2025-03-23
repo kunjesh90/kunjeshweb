@@ -9,6 +9,8 @@ from langchain.docstore import InMemoryDocstore
 from langchain.docstore.document import Document
 from langchain_together import ChatTogether  # Import Together.ai integration
 import os
+import uvicorn  # Add uvicorn import here
+
 
 
 # Initialize FastAPI app
