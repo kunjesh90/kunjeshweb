@@ -21,7 +21,7 @@ print("wd",os.getcwd())
 # Enable CORS for the frontend to communicate with the backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],  # Allow only this frontend URL (your frontend is running on this port)
+    allow_origins=["https://kunjeshweb.vercel.app/"],  # Allow only this frontend URL (your frontend is running on this port)
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
