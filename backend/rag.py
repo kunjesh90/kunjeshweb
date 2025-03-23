@@ -62,3 +62,8 @@ async def ask_question(query: str):
     response = chat_model.ask(query=query, context=document.page_content)
     print("response")
     return {"response": response}
+# Only run the server if this script is executed directly (useful for debugging locally)
+if __name__ == "__main__":
+    # Retrieve the port from environment variable, default to 10000 if not set (Render assigns this dynamically)
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
