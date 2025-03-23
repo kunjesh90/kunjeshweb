@@ -53,7 +53,7 @@ async function sendMessage() {
   try {
     console.log("Making fetch request to backend...");
     const response = await fetch(
-      `http://127.0.0.1:8000/ask?query=${encodeURIComponent(userInput)}`
+      `https://profilebck.onrender.com/ask?query=${encodeURIComponent(userInput)}`
     );
     console.log("Received response from backend:", response); // Log the response object
 
