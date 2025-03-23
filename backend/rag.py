@@ -40,8 +40,7 @@ embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 with open('docstore.pkl', 'rb') as f:
     docstore = pickle.load(f)
 
-with open('faiss_index.index', 'rb') as f:
-    faiss_index = pickle.load(f)
+faiss_index = faiss.read_index('faiss_index.index')
 
 # Define the RAG logic to process the query
 @app.get("/ask")
