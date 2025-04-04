@@ -67,6 +67,9 @@ prompt_template = PromptTemplate(
     )
 )
 
+print("\n🧾 PROMPT TEMPLATE PREVIEW:\n")
+print(prompt_template)
+
 # Load the embeddings model
 embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 print("✅ Embedding model loaded: all-MiniLM-L6-v2 🧠")
@@ -129,26 +132,26 @@ async def ask_question(query: str):
         print("⚠️ No relevant documents found.")
         return {"response": "No relevant information found in the knowledge base."}
 
+
     # Retrieve the most relevant document
     retrieved_docs = [doc.page_content for doc, _ in valid_docs if doc]
     print("📄 Retrieved document content:", retrieved_docs)
 
-    if retrieved_docs:
-        context_text = "\n".join(retrieved_docs)
-        messages = [
-            HumanMessage(content=f"Context: {context_text}\nUser Query: {query}")
-        ]
-    else:
-        messages = [HumanMessage(content=f"User Query: {query}")]
+    # Always define context_text
+    context_text = "\n".join(retrieved_docs) if retrieved_docs else "No relevant information found."
+
+    # Format prompt using context
+    formatted_prompt = prompt_template.format(context=context_text, question=query)
 
     try:
-        response = chat_model.invoke(messages)
+        response = chat_model.invoke([HumanMessage(content=formatted_prompt)])
         response_text = response.content
     except Exception as e:
         print(f"❌ Error generating response with Together.ai: {e}")
         raise HTTPException(status_code=500, detail="Error generating chatbot response.")
 
     return {"response": response_text}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001, reload=True)
