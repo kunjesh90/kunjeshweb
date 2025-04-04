@@ -360,5 +360,12 @@ ul li {
   background: #0056b3;
 }
 
+#reset-history {
+  width: 35px;
+  height: 15px;
+  cursor: pointer;
+  margin-left: 160px;
+}
+
 
 /*new chatbot css ends*/
