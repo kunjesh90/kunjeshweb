@@ -21,7 +21,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # --- Add this utility function ---
 def resolve_pronouns(query: str) -> str:
     # Replace common pronoun references to "Kunjesh"
-    query = re.sub(r"\b(he|his|sir)\b", "Kunjesh", query, flags=re.IGNORECASE)
+    query = re.sub(r"\b(he|his)\b", "Kunjesh", query, flags=re.IGNORECASE)
     return query
 
 # Initialize FastAPI app
