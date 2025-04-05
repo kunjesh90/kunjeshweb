@@ -1,3 +1,5 @@
+let isProcessing = false; // Flag to prevent multiple messages
+
 // Run once DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   const chatMessages = document.getElementById("chat-messages");
@@ -52,7 +54,6 @@ function autoScroll() {
 function addWelcomeMessage() {
   const chatMessages = document.getElementById("chat-messages");
 
-  // Ensure welcome message is not added twice
   if (!document.querySelector(".welcome-message")) {
     let welcomeMessage = document.createElement("p");
     welcomeMessage.classList.add("bot-message", "welcome-message");
@@ -64,19 +65,25 @@ function addWelcomeMessage() {
 
 // Function to send message to backend
 async function sendMessage() {
-  let userInput = document.getElementById("user-input").value.trim();
+  if (isProcessing) return; // Prevent sending another message while waiting
+  let userInputEl = document.getElementById("user-input");
+  let sendButton = document.getElementById("send-message");
+  let userInput = userInputEl.value.trim();
+
   if (userInput === "") return;
+
+  isProcessing = true; // Lock interaction
+  userInputEl.disabled = true;
+  sendButton.disabled = true;
 
   // Add user message
   let userMessage = document.createElement("p");
   userMessage.classList.add("user-message");
   userMessage.textContent = userInput;
   document.getElementById("chat-messages").appendChild(userMessage);
-  document.getElementById("user-input").value = ""; // Clear input
-
+  userInputEl.value = ""; // Clear input
   autoScroll();
 
-  // Fetch response from FastAPI backend
   try {
     const response = await fetch(`https://kunj-backend.onrender.com/ask?query=${encodeURIComponent(userInput)}`);
     if (!response.ok) throw new Error("Network response was not ok");
@@ -88,17 +95,16 @@ async function sendMessage() {
     botMessage.classList.add("bot-message");
     botMessage.textContent = data.response;
     document.getElementById("chat-messages").appendChild(botMessage);
-
-    autoScroll();
   } catch (error) {
     console.error("Error fetching response:", error);
-
-    // Show fallback error message
     let errorMessage = document.createElement("p");
     errorMessage.classList.add("bot-message");
-    errorMessage.textContent = "Sorry, something went wrong while fetching my response. Please try again later.";
+    errorMessage.textContent = "Sorry for the delay, need some time to answer your query.";
     document.getElementById("chat-messages").appendChild(errorMessage);
-
+  } finally {
+    isProcessing = false; // Unlock interaction
+    userInputEl.disabled = false;
+    sendButton.disabled = false;
     autoScroll();
   }
 }
