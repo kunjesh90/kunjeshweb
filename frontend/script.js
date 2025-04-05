@@ -99,7 +99,7 @@ async function sendMessage() {
     console.error("Error fetching response:", error);
     let errorMessage = document.createElement("p");
     errorMessage.classList.add("bot-message");
-    errorMessage.textContent = "Sorry for the delay, need some time to answer your query.";
+    errorMessage.textContent = "The backend systems are getting ready to answer your questions however you may experience delay of 50 seconds only for the first answer. Till then hang on.";
     document.getElementById("chat-messages").appendChild(errorMessage);
   } finally {
     isProcessing = false; // Unlock interaction
