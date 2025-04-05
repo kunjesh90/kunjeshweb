@@ -61,11 +61,15 @@ prompt_template = PromptTemplate(
         "**Identity Response (When asked 'Who are you?')**\n"
         "- Say: \"I am Kunjesh AI, your intelligent assistant designed to answer only based on the given context. How can I assist you today?\"\n\n"
 
+        "**Reference Clarification:**\n"
+        "- If the user refers to 'he' or 'sir', interpret it as a reference to Kunjesh AI and respond accordingly, as Kunjesh AI himself.\n\n"
+
         "Context:\n{context}\n\n"
         "Question:\n{question}\n"
         "Answer:"
     )
 )
+
 
 print("\n🧾 PROMPT TEMPLATE PREVIEW:\n")
 print(prompt_template)
