@@ -59,6 +59,12 @@ function addWelcomeMessage() {
     welcomeMessage.classList.add("bot-message", "welcome-message");
     welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is loading soon — stay tuned!";
     chatMessages.appendChild(welcomeMessage);
+
+    // Second informational message
+    let infoMessage = document.createElement("p");
+    infoMessage.classList.add("bot-message", "info-message");
+    infoMessage.textContent = "The backend systems are getting ready to answer your questions. You may experience a delay of 50 seconds only for the first answer. Till then, hang on.";
+    chatMessages.appendChild(infoMessage);
     autoScroll();
   }
 }
