@@ -14,9 +14,15 @@ from langchain.prompts import PromptTemplate
 import os
 import uvicorn
 from langchain_core.messages import AIMessage, HumanMessage
+import re
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+# --- Add this utility function ---
+def resolve_pronouns(query: str) -> str:
+    # Replace common pronoun references to "Kunjesh"
+    query = re.sub(r"\b(he|his|sir)\b", "Kunjesh", query, flags=re.IGNORECASE)
+    return query
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -111,15 +117,19 @@ async def ask_question(query: str):
     if not docstore:
         raise HTTPException(status_code=500, detail="❌ Docstore is not loaded.")
 
-    # Generate embedding for the query
+    # 🔄 Preprocess the query for pronouns
+    resolved_query = resolve_pronouns(query)
+    print(f"🔄 Resolved query: {resolved_query}")
+
+    # Generate embedding
     try:
-        query_embedding = embedding_model.embed_query(query)
+        query_embedding = embedding_model.embed_query(resolved_query)
         print("✅ Query embedding created 🧩")
     except Exception as e:
         print(f"❌ Error generating query embedding: {e}")
         raise HTTPException(status_code=500, detail="Error generating query embedding.")
 
-    # Perform FAISS search
+    # Search in FAISS
     try:
         D, I = faiss_index.search(np.array([query_embedding]), k=3)
         print(f"📌 Retrieved document IDs: {I[0]}")
@@ -128,25 +138,21 @@ async def ask_question(query: str):
         print(f"❌ Error searching FAISS index: {e}")
         raise HTTPException(status_code=500, detail="Error retrieving documents from FAISS index.")
 
-    # Apply distance threshold
+    # Filter by threshold
     threshold = 0.8
     valid_docs = [(docstore._dict.get(int(doc_id)), distance) for doc_id, distance in zip(I[0], D[0]) if doc_id != -1]
-
 
     if not valid_docs:
         print("⚠️ No relevant documents found.")
         return {"response": "No relevant information found in the knowledge base."}
 
-
-    # Retrieve the most relevant document
+    # Build context
     retrieved_docs = [doc.page_content for doc, _ in valid_docs if doc]
+    context_text = "\n".join(retrieved_docs) if retrieved_docs else "No relevant information found."
     print("📄 Retrieved document content:", retrieved_docs)
 
-    # Always define context_text
-    context_text = "\n".join(retrieved_docs) if retrieved_docs else "No relevant information found."
-
-    # Format prompt using context
-    formatted_prompt = prompt_template.format(context=context_text, question=query)
+    # Format prompt
+    formatted_prompt = prompt_template.format(context=context_text, question=resolved_query)
 
     try:
         response = chat_model.invoke([HumanMessage(content=formatted_prompt)])
