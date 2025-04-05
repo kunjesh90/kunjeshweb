@@ -1,4 +1,5 @@
 let isProcessing = false; // Flag to prevent multiple messages
+let isFirstUserMessage = true; // Flag for first user interaction
 
 // Run once DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("reset-history").addEventListener("click", function () {
     chatMessages.innerHTML = ""; // Clear messages
     addWelcomeMessage(); // Add welcome message again
+    isFirstUserMessage = true; // Reset flag
   });
 });
 
@@ -59,12 +61,6 @@ function addWelcomeMessage() {
     welcomeMessage.classList.add("bot-message", "welcome-message");
     welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is loading soon — stay tuned!";
     chatMessages.appendChild(welcomeMessage);
-
-    // Second informational message
-    let infoMessage = document.createElement("p");
-    infoMessage.classList.add("bot-message", "info-message");
-    infoMessage.textContent = "The backend systems are getting ready to answer your questions. You may experience a delay of 50 seconds only for the first answer. Till then, hang on.";
-    chatMessages.appendChild(infoMessage);
     autoScroll();
   }
 }
@@ -72,13 +68,14 @@ function addWelcomeMessage() {
 // Function to send message to backend
 async function sendMessage() {
   if (isProcessing) return; // Prevent sending another message while waiting
+
   let userInputEl = document.getElementById("user-input");
   let sendButton = document.getElementById("send-message");
   let userInput = userInputEl.value.trim();
 
   if (userInput === "") return;
 
-  isProcessing = true; // Lock interaction
+  isProcessing = true;
   userInputEl.disabled = true;
   sendButton.disabled = true;
 
@@ -87,8 +84,18 @@ async function sendMessage() {
   userMessage.classList.add("user-message");
   userMessage.textContent = userInput;
   document.getElementById("chat-messages").appendChild(userMessage);
-  userInputEl.value = ""; // Clear input
+  userInputEl.value = "";
   autoScroll();
+
+  // Show first-time delay message
+  if (isFirstUserMessage) {
+    let firstTimeNotice = document.createElement("p");
+    firstTimeNotice.classList.add("bot-message", "first-delay-notice");
+    firstTimeNotice.textContent = "The backend systems are getting ready to answer your questions. You may experience a delay of 50 seconds only for the first answer. Till then, hang on.";
+    document.getElementById("chat-messages").appendChild(firstTimeNotice);
+    autoScroll();
+    isFirstUserMessage = false;
+  }
 
   try {
     const response = await fetch(`https://kunj-backend.onrender.com/ask?query=${encodeURIComponent(userInput)}`);
@@ -105,10 +112,10 @@ async function sendMessage() {
     console.error("Error fetching response:", error);
     let errorMessage = document.createElement("p");
     errorMessage.classList.add("bot-message");
-    errorMessage.textContent = "The backend systems are getting ready to answer your questions however you may experience delay of 50 seconds only for the first answer. Till then hang on.";
+    errorMessage.textContent = "Oops! There was a problem reaching the backend. Please try again in a few moments.";
     document.getElementById("chat-messages").appendChild(errorMessage);
   } finally {
-    isProcessing = false; // Unlock interaction
+    isProcessing = false;
     userInputEl.disabled = false;
     sendButton.disabled = false;
     autoScroll();
