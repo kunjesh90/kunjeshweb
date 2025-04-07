@@ -99,8 +99,9 @@ async function sendMessage() {
 
   try {
     const response = await fetch(`https://kunj-backend.onrender.com/ask?query=${encodeURIComponent(userInput)}`);
-    if (!response.ok) throw new Error("Please re-type your query");
+  //https://kunjeshweb.onrender.com
 
+    if (!response.ok) throw new Error("Please re-type your query");
     const data = await response.json();
 
     // Add bot response
