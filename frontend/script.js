@@ -59,7 +59,7 @@ function addWelcomeMessage() {
   if (!document.querySelector(".welcome-message")) {
     let welcomeMessage = document.createElement("p");
     welcomeMessage.classList.add("bot-message", "welcome-message");
-    welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is ready to intract!";
+    welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is ready to interact!";
     chatMessages.appendChild(welcomeMessage);
     autoScroll();
   }
