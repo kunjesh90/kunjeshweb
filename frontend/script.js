@@ -59,7 +59,7 @@ function addWelcomeMessage() {
   if (!document.querySelector(".welcome-message")) {
     let welcomeMessage = document.createElement("p");
     welcomeMessage.classList.add("bot-message", "welcome-message");
-    welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is loading soon — stay tuned!";
+    welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is ready to intract!";
     chatMessages.appendChild(welcomeMessage);
     autoScroll();
   }
@@ -112,7 +112,7 @@ async function sendMessage() {
     console.error("Error fetching response:", error);
     let errorMessage = document.createElement("p");
     errorMessage.classList.add("bot-message");
-    errorMessage.textContent = "Oops! There was a problem reaching the backend. Please try again in a few moments.";
+    errorMessage.textContent = "The system is all set. You can teract now.";
     document.getElementById("chat-messages").appendChild(errorMessage);
   } finally {
     isProcessing = false;
