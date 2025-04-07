@@ -76,8 +76,8 @@ async function sendMessage() {
   if (userInput === "") return;
 
   isProcessing = true;
-  userInputEl.disabled = true;
-  sendButton.disabled = true;
+  sendButton.disabled = true; // Only disable send button
+  sendButton.classList.add("disabled-button"); // ✨ Fade out button
 
   // Add user message
   let userMessage = document.createElement("p");
@@ -99,7 +99,7 @@ async function sendMessage() {
 
   try {
     const response = await fetch(`https://kunj-backend.onrender.com/ask?query=${encodeURIComponent(userInput)}`);
-    if (!response.ok) throw new Error("Network response was not ok");
+    if (!response.ok) throw new Error("Please re-type your query");
 
     const data = await response.json();
 
@@ -116,8 +116,8 @@ async function sendMessage() {
     document.getElementById("chat-messages").appendChild(errorMessage);
   } finally {
     isProcessing = false;
-    userInputEl.disabled = false;
-    sendButton.disabled = false;
+    sendButton.disabled = false; // Re-enable send button
+    sendButton.classList.remove("disabled-button"); // ✨ Restore button
     autoScroll();
   }
 }
