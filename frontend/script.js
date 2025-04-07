@@ -112,7 +112,7 @@ async function sendMessage() {
     console.error("Error fetching response:", error);
     let errorMessage = document.createElement("p");
     errorMessage.classList.add("bot-message");
-    errorMessage.textContent = "The system is all set. You can teract now.";
+    errorMessage.textContent = "The system is all set. You can interact now.";
     document.getElementById("chat-messages").appendChild(errorMessage);
   } finally {
     isProcessing = false;
