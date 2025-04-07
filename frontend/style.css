@@ -367,5 +367,11 @@ ul li {
   margin-left: 160px;
 }
 
+#send-message.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transition: opacity 0.3s ease;
+}
+
 
 /*new chatbot css ends*/
