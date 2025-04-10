@@ -1,19 +1,46 @@
-let isProcessing = false; // Flag to prevent multiple messages
-let isFirstUserMessage = true; // Flag for first user interaction
+// ✅ Voice Assistant + Speaker Icon Enhanced Chatbot
 
-// Run once DOM is fully loaded
-document.addEventListener("DOMContentLoaded", function () {
+let isProcessing = false;
+let isFirstUserMessage = true;
+
+// 🎤 Speech Recognition Setup
+let recognition;
+if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById("user-input").value += " " + transcript;
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error", event);
+  };
+} else {
+  console.warn("SpeechRecognition not supported");
+}
+
+// 🔊 Speech Synthesis
+function speakText(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+// DOM Ready Logic
+window.addEventListener("DOMContentLoaded", () => {
   const chatMessages = document.getElementById("chat-messages");
 
-  // Ensure no duplicate welcome message
-  if (chatMessages.childElementCount === 0) {
-    addWelcomeMessage();
-  }
+  if (chatMessages.childElementCount === 0) addWelcomeMessage();
 
-  // Collapsible logic for show/hide details
-  const collapsibles = document.querySelectorAll(".collapsible");
-  collapsibles.forEach((collapsible) => {
-    collapsible.addEventListener("click", function () {
+  // Collapsibles (if any)
+  document.querySelectorAll(".collapsible").forEach((btn) => {
+    btn.addEventListener("click", function () {
       const details = this.nextElementSibling;
       if (details && details.classList.contains("details")) {
         details.classList.toggle("show");
@@ -22,102 +49,110 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Reset Chat History
-  document.getElementById("reset-history").addEventListener("click", function () {
-    chatMessages.innerHTML = ""; // Clear messages
-    addWelcomeMessage(); // Add welcome message again
-    isFirstUserMessage = true; // Reset flag
+  // Reset history
+  document.getElementById("reset-history").addEventListener("click", () => {
+    chatMessages.innerHTML = "";
+    addWelcomeMessage();
+    isFirstUserMessage = true;
   });
 });
 
-// Open chat window
-document.getElementById("chat-icon").addEventListener("click", function () {
+// Chat UI Toggles
+document.getElementById("chat-icon").onclick = () => {
   document.getElementById("chat-window").style.display = "flex";
-});
-
-// Close chat window
-document.getElementById("close-chat").addEventListener("click", function () {
+};
+document.getElementById("close-chat").onclick = () => {
   document.getElementById("chat-window").style.display = "none";
+};
+
+// Event Bindings
+const sendButton = document.getElementById("send-message");
+const userInputEl = document.getElementById("user-input");
+const micButton = document.getElementById("mic-button");
+
+sendButton.addEventListener("click", sendMessage);
+userInputEl.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
 });
 
-// Send message events
-document.getElementById("send-message").addEventListener("click", sendMessage);
-document.getElementById("user-input").addEventListener("keypress", function (event) {
-  if (event.key === "Enter") sendMessage();
-});
+micButton.addEventListener("mousedown", () => recognition?.start());
+micButton.addEventListener("mouseup", () => recognition?.stop());
+micButton.addEventListener("touchstart", () => recognition?.start());
+micButton.addEventListener("touchend", () => recognition?.stop());
 
-// Auto-scroll to latest message
+// Auto-scroll helper
 function autoScroll() {
-  let chatBody = document.getElementById("chat-body");
+  const chatBody = document.getElementById("chat-body");
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-// Function to add the welcome message (avoid duplication)
+// Welcome greeting
 function addWelcomeMessage() {
-  const chatMessages = document.getElementById("chat-messages");
-
-  if (!document.querySelector(".welcome-message")) {
-    let welcomeMessage = document.createElement("p");
-    welcomeMessage.classList.add("bot-message", "welcome-message");
-    welcomeMessage.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is ready to interact!";
-    chatMessages.appendChild(welcomeMessage);
-    autoScroll();
-  }
+  const welcome = document.createElement("p");
+  welcome.className = "bot-message welcome-message";
+  welcome.textContent = "Hi! I’m the AI voice of Kunjesh. My avatar is ready to interact!";
+  document.getElementById("chat-messages").appendChild(welcome);
+  autoScroll();
 }
 
-// Function to send message to backend
+// Send Message Function
 async function sendMessage() {
-  if (isProcessing) return; // Prevent sending another message while waiting
+  if (isProcessing) return;
 
-  let userInputEl = document.getElementById("user-input");
-  let sendButton = document.getElementById("send-message");
-  let userInput = userInputEl.value.trim();
-
-  if (userInput === "") return;
+  const userInput = userInputEl.value.trim();
+  if (!userInput) return;
 
   isProcessing = true;
-  sendButton.disabled = true; // Only disable send button
-  sendButton.classList.add("disabled-button"); // ✨ Fade out button
+  sendButton.disabled = true;
+  sendButton.classList.add("disabled-button");
 
-  // Add user message
-  let userMessage = document.createElement("p");
-  userMessage.classList.add("user-message");
-  userMessage.textContent = userInput;
-  document.getElementById("chat-messages").appendChild(userMessage);
+  // Display user message
+  const userMsg = document.createElement("p");
+  userMsg.className = "user-message";
+  userMsg.textContent = userInput;
+  document.getElementById("chat-messages").appendChild(userMsg);
   userInputEl.value = "";
   autoScroll();
 
-  // Show first-time delay message
+  // First-time loading notice
   if (isFirstUserMessage) {
-    let firstTimeNotice = document.createElement("p");
-    firstTimeNotice.classList.add("bot-message", "first-delay-notice");
-    firstTimeNotice.textContent = "The backend systems are getting ready to answer your questions. You may experience a delay of 50 seconds only for the first answer. Till then, hang on.";
-    document.getElementById("chat-messages").appendChild(firstTimeNotice);
+    const notice = document.createElement("p");
+    notice.className = "bot-message first-delay-notice";
+    notice.textContent = "The backend systems are getting ready... Hang on.";
+    document.getElementById("chat-messages").appendChild(notice);
     autoScroll();
     isFirstUserMessage = false;
   }
 
   try {
-    const response = await fetch(`https://bck-3c04.onrender.com/ask?query=${encodeURIComponent(userInput)}`);
-//https://kunj-backend.onrender.com
-    if (!response.ok) throw new Error("Please re-type your query");
+    const response = await fetch(`https://kunj-backend.onrender.com/ask?query=${encodeURIComponent(userInput)}`);
     const data = await response.json();
 
-    // Add bot response
-    let botMessage = document.createElement("p");
-    botMessage.classList.add("bot-message");
-    botMessage.textContent = data.response;
-    document.getElementById("chat-messages").appendChild(botMessage);
+    const botText = data.response;
+    const botMsg = document.createElement("div");
+    botMsg.className = "bot-message";
+
+    // Escape backticks for template safety
+    const safeBotText = botText.replace(/`/g, "\\`");
+
+    // Inject speaker icon
+    botMsg.innerHTML = `
+      <span>${botText}</span>
+      <button class="speaker-button" onclick="speakText(\`${safeBotText}\`)">
+        <i class="fas fa-volume-up"></i>
+      </button>
+    `;
+    document.getElementById("chat-messages").appendChild(botMsg);
   } catch (error) {
-    console.error("Error fetching response:", error);
-    let errorMessage = document.createElement("p");
-    errorMessage.classList.add("bot-message");
-    errorMessage.textContent = "The system is all set. You can interact now.";
-    document.getElementById("chat-messages").appendChild(errorMessage);
+    console.error("Chat error:", error);
+    const errMsg = document.createElement("p");
+    errMsg.className = "bot-message";
+    errMsg.textContent = "Something went wrong. Please try again.";
+    document.getElementById("chat-messages").appendChild(errMsg);
   } finally {
     isProcessing = false;
-    sendButton.disabled = false; // Re-enable send button
-    sendButton.classList.remove("disabled-button"); // ✨ Restore button
+    sendButton.disabled = false;
+    sendButton.classList.remove("disabled-button");
     autoScroll();
   }
 }
