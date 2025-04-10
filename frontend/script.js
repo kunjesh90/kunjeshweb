@@ -75,10 +75,20 @@ userInputEl.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-micButton.addEventListener("mousedown", () => recognition?.start());
-micButton.addEventListener("mouseup", () => recognition?.stop());
-micButton.addEventListener("touchstart", () => recognition?.start());
-micButton.addEventListener("touchend", () => recognition?.stop());
+let isRecording = false;
+
+micButton.addEventListener("click", () => {
+  if (!recognition) return;
+
+  if (isRecording) {
+    recognition.stop();
+  } else {
+    recognition.start();
+  }
+
+  isRecording = !isRecording;
+});
+
 
 // Auto-scroll helper
 function autoScroll() {
