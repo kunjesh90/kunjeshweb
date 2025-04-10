@@ -375,10 +375,10 @@ ul li {
 #mic-button, .speaker-icon {
     background-color: #0474ec;
     height: 60px;
-    width: 45px;
+    width: 30px;
     border: none;
     cursor: pointer;
-    padding: 0 15px;
+    padding: 0 9px;
     display: flex;
     align-items: center;
     color: white;
