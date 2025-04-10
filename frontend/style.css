@@ -368,9 +368,38 @@ ul li {
 }
 
 #send-message.disabled-button {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transition: opacity 0.3s ease;
+    opacity: 0.5;
+    cursor: not-allowed;
+    transition: opacity 0.3s ease;
+}
+#mic-button, .speaker-icon {
+    background-color: #0474ec;
+    height: 45px;
+    width: auto;
+    border: none;
+    cursor: pointer;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    color: white;
+    transition: color 0.3s;
+}
+
+#mic-button.recording {
+  color: red;
+}
+
+.speaker-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  color: #0474ec;
+  font-size: 1em;
+}
+
+.speaker-button:hover {
+  color: #0474ec;
 }
 
 
