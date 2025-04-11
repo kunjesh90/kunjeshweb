@@ -1,5 +1,3 @@
-// ✅ Voice Assistant + Speaker Icon Enhanced Chatbot
-
 let isProcessing = false;
 let isFirstUserMessage = true;
 
@@ -32,13 +30,33 @@ function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// DOM Ready Logic
+function handleSpeak(speakerBtn, text) {
+  window.speechSynthesis.cancel();
+
+  const pauseBtn = speakerBtn.nextElementSibling;
+  pauseBtn.style.display = "inline-flex";
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+
+  utterance.onend = () => {
+    pauseBtn.style.display = "none";
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function pauseSpeech(pauseBtn) {
+  window.speechSynthesis.cancel();
+  pauseBtn.style.display = "none";
+}
+
+// DOM Ready
 window.addEventListener("DOMContentLoaded", () => {
   const chatMessages = document.getElementById("chat-messages");
-
   if (chatMessages.childElementCount === 0) addWelcomeMessage();
 
-  // Collapsibles (if any)
+  // Collapsibles
   document.querySelectorAll(".collapsible").forEach((btn) => {
     btn.addEventListener("click", function () {
       const details = this.nextElementSibling;
@@ -49,7 +67,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Reset history
   document.getElementById("reset-history").addEventListener("click", () => {
     chatMessages.innerHTML = "";
     addWelcomeMessage();
@@ -57,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Chat UI Toggles
+// UI Toggles
 document.getElementById("chat-icon").onclick = () => {
   document.getElementById("chat-window").style.display = "flex";
 };
@@ -82,21 +99,16 @@ micButton.addEventListener("click", () => {
 
   if (isRecording) {
     recognition.stop();
+    micButton.innerHTML = '<i class="fas fa-microphone"></i>';
   } else {
     recognition.start();
+    micButton.innerHTML = '<i class="fas fa-microphone-slash"></i>';
   }
 
   isRecording = !isRecording;
 });
 
-
-// Auto-scroll helper
-function autoScroll() {
-  const chatBody = document.getElementById("chat-body");
-  chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-// Welcome greeting
+// Welcome Message
 function addWelcomeMessage() {
   const welcome = document.createElement("p");
   welcome.className = "bot-message welcome-message";
@@ -105,7 +117,13 @@ function addWelcomeMessage() {
   autoScroll();
 }
 
-// Send Message Function
+// Auto-scroll helper
+function autoScroll() {
+  const chatBody = document.getElementById("chat-body");
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// Send Message Logic
 async function sendMessage() {
   if (isProcessing) return;
 
@@ -116,7 +134,7 @@ async function sendMessage() {
   sendButton.disabled = true;
   sendButton.classList.add("disabled-button");
 
-  // Display user message
+  // Show user message
   const userMsg = document.createElement("p");
   userMsg.className = "user-message";
   userMsg.textContent = userInput;
@@ -124,7 +142,6 @@ async function sendMessage() {
   userInputEl.value = "";
   autoScroll();
 
-  // First-time loading notice
   if (isFirstUserMessage) {
     const notice = document.createElement("p");
     notice.className = "bot-message first-delay-notice";
@@ -142,16 +159,18 @@ async function sendMessage() {
     const botMsg = document.createElement("div");
     botMsg.className = "bot-message";
 
-    // Escape backticks for template safety
     const safeBotText = botText.replace(/`/g, "\\`");
 
-    // Inject speaker icon
     botMsg.innerHTML = `
       <span>${botText}</span>
-      <button class="speaker-button" onclick="speakText(\`${safeBotText}\`)">
+      <button class="speaker-button" onclick="handleSpeak(this, \`${safeBotText}\`)">
         <i class="fas fa-volume-up"></i>
       </button>
+      <button class="pause-button" style="display: none;" onclick="pauseSpeech(this)">
+        <i class="fas fa-stop-circle"></i>
+      </button>
     `;
+
     document.getElementById("chat-messages").appendChild(botMsg);
   } catch (error) {
     console.error("Chat error:", error);
