@@ -420,6 +420,11 @@ ul li {
   color: black;
 }
 
+.timestamp {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 
 
 /*new chatbot css ends*/
