@@ -51,6 +51,18 @@ function pauseSpeech(pauseBtn) {
   pauseBtn.style.display = "none";
 }
 
+// 📅 Format timestamp
+function getCurrentFormattedTime() {
+  const now = new Date();
+  return now.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
 // DOM Ready
 window.addEventListener("DOMContentLoaded", () => {
   const chatMessages = document.getElementById("chat-messages");
@@ -134,10 +146,13 @@ async function sendMessage() {
   sendButton.disabled = true;
   sendButton.classList.add("disabled-button");
 
-  // Show user message
-  const userMsg = document.createElement("p");
+  // Show user message with timestamp
+  const userMsg = document.createElement("div");
   userMsg.className = "user-message";
-  userMsg.textContent = userInput;
+  userMsg.innerHTML = `
+    <span>${userInput}</span>
+    <div class="timestamp">${getCurrentFormattedTime()}</div>
+  `;
   document.getElementById("chat-messages").appendChild(userMsg);
   userInputEl.value = "";
   autoScroll();
@@ -169,6 +184,7 @@ async function sendMessage() {
       <button class="pause-button" style="display: none;" onclick="pauseSpeech(this)">
         <i class="fas fa-stop-circle"></i>
       </button>
+      <div class="timestamp">${getCurrentFormattedTime()}</div>
     `;
 
     document.getElementById("chat-messages").appendChild(botMsg);
