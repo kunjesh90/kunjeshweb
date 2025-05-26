@@ -41,7 +41,7 @@
 
       <h2>Education</h2>
       <ul>
-        <li>PhD in AI - IIT Jodhpur - 8.00/10 (2023-2028)*</li>
+        <li>PhD in AI - IIT Jodhpur - 8.66/10 (2023-2028)*</li>
         <li>MBA - IIT Roorkee - 8.46/10 (2013-2015)</li>
         <li>CAT - IIM  - 98.99 percentile (2012)</li>
         <li>B.Tech - Nirma University - 8.09/10 (2007-2011)</li>
@@ -332,20 +332,26 @@
 
     </div>
   </div>
-  
-  
-  <!-- Chat Icon (Click to Open Chat) -->
-<!--<div id="chat-icon">💬</div> -->
 
+<!-- Load React and ReactDOM (React 18 for compatibility) -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-<div id="chat-icon">
-  <span id="chat-text">AI-Kunj</span> <!-- Added "AI-Kunj" text -->
-  <i class="fas fa-comments"></i> <!-- Chat Bubble Icon -->
-  <img src="Profile.png" alt="Chat Icon">
-</div>
+<!-- Load your updated chatbot widget (v1.0.2) -->
+<script src="https://unpkg.com/rag-chatbot-ui-kunjfrontend@1.0.2/dist/chatbot-widget.iife.js"></script>
 
-<!-- Chat Window -->
- 
+<!-- Mounting container -->
+<div id="chatbot-root"></div>
+
+<!-- Initialize chatbot -->
+<script>
+  if (window.mountChatbotWidget) {
+    window.mountChatbotWidget('chatbot-root');
+  } else {
+    console.error("Chatbot widget not available.");
+  }
+</script>
+
 <!-- Chat Window -->
 <div id="chat-window">
   <div id="chat-header">
