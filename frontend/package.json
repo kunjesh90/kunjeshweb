@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "16.x"
+    "node": "24.x"
   },
   "scripts": {
     "start": "serve -s ."
@@ -9,3 +9,4 @@
     "serve": "^14.0.1"
   }
 }
+
