@@ -258,6 +258,7 @@ ul li {
   bottom: 80px;
   right: 20px;
   width: 320px;
+  max-height: 85vh;
   background: white;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -294,7 +295,7 @@ ul li {
   flex-grow: 1;
   padding: 10px;
   overflow-y: auto;
-  max-height: 250px;
+  max-height: calc(85vh - 120px);
   background: #f9f9f9;
 }
 
@@ -450,3 +451,4 @@ ul li {
 .download-btn i {
   margin-right: 6px;
 }
+
