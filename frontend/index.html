@@ -318,50 +318,39 @@
     </div>
   </div>
 
-<!-- Load React and ReactDOM (React 18 for compatibility) -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+</div> <!-- closes .container -->
 
-<!-- Load your updated chatbot widget (v1.0.2) -->
-<script src="https://unpkg.com/rag-chatbot-ui-kunjfrontend@1.1.9/dist/chatbot-widget.iife.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/gts-chatbot@1.1.15/dist/chatbot.iife.js"></script>
 
-<!-- Mounting container -->
-<div id="chatbot-root"></div>
+  <div id="chatbot-root"></div>
 
-<!-- Initialize chatbot -->
-<script>
-  if (window.mountChatbotWidget) {
-    window.mountChatbotWidget('chatbot-root');
-  } else {
-    console.error("Chatbot widget not available.");
-  }
-</script>
+  <script>
+    const container = document.getElementById('chatbot-root');
+    const root = ReactDOM.createRoot(container);
+    root.render(
+      React.createElement(GTSChatbot.Chatbot, {
+        config: {
+          API_BASE_URL: "https://genaitechsol.shop",
+          PROJECT_NAME: "kunjeshweb.vercel"
+        }
+      })
+    );
+  </script>
 
-<!-- Chat Window -->
-<div id="chat-window">
-  <div id="chat-header">
-    <span>AI-Kunj</span>
-    <i id="reset-history" class="fas fa-sync-alt" title="Reset Chat"></i>
-    <button id="close-chat">&times;</button>
-  </div>
-  <div id="chat-body">
-    <div id="chat-messages">
-      <p class="bot-message">Hi! I’m the AI voice of Kunjesh. My avatar is ready to interact!</p>
-    </div>
-  </div>
-  <div id="chat-input">
-    <input type="text" id="user-input" placeholder="Type a message..." />
-    <button id="mic-button" title="Hold to Speak 🎤">
-      <i class="fas fa-microphone"></i>
-    </button>    
-    <button id="send-message"><i class="fas fa-paper-plane"></i></button>
-  </div>
-  
-</div>
-
-<!-- Chat Icon Code End (Click to Open Chat ) -->
-
-  <script src="script.js"></script>
+  <!-- Collapsible script only -->
+  <script>
+    document.querySelectorAll(".collapsible").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const details = this.nextElementSibling;
+        if (details && details.classList.contains("details")) {
+          details.classList.toggle("show");
+          this.textContent = details.classList.contains("show") ? "Hide Details" : "Show Details";
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
